@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: companies-crud
+  datasource:
+    url: jdbc:postgresql://localhost:5432/companies
+    username: debuggeandoideas
+    password: udemy
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 5
+      connection-timeout: 20000
+jpa:
+  database-platform: org.hibernate.dialect.PostgreSQLDialect
+  hibernate:
+    ddl-auto: update
+  show-sql: true
+  properties:
+    hibernate:
+      format_sql: true
+server:
+  port: 0
+  servlet:
+    context-path: /companies-crud
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+eureka:
+  instance:
+    instance-id: "${spring.application.name}:${random.value}"
+  client:
+    service-url:
+        defaultZone: http://localhost:8761/eureka/

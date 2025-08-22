@@ -5,6 +5,7 @@ import com.udemy.companies_crud.entity.Category;
 import com.udemy.companies_crud.entity.Company;
 import com.udemy.companies_crud.entity.WebSite;
 import com.udemy.companies_crud.repository.CompanyRepository;
+import com.udemy.companies_crud.repository.WebSiteRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,7 @@ public class CompanyServiceImpl implements CompanyService {
 
     private final CompanyRepository companyRepository;
     private final WebsiteService websiteService;
+    private final WebSiteRepository webSiteRepository;
 
     @Override
     public CompanyDTO readById(Long id) {
@@ -56,7 +58,6 @@ public class CompanyServiceImpl implements CompanyService {
         final Company newCompany;
         if (company.getId() != null) {
             newCompany = companyRepository.findById(company.getId()).get();
-            company = readById(company.getId());
         } else {
             newCompany = new Company();
         }
@@ -64,8 +65,14 @@ public class CompanyServiceImpl implements CompanyService {
         BeanUtils.copyProperties(company, newCompany);
         company.getWebSites().forEach(ws -> {
             WebSite newWebSite = new WebSite();
-            BeanUtils.copyProperties(ws, newWebSite);
-            newCompany.getWebSite().add(newWebSite);
+            if(ws.getId() != null) {
+                newWebSite = webSiteRepository.findById(ws.getId()).get();
+                BeanUtils.copyProperties(ws, newWebSite);
+                newCompany.getWebSite().add(newWebSite);
+            }else{
+                BeanUtils.copyProperties(ws, newWebSite);
+                newCompany.getWebSite().add(newWebSite);
+            }
         });
 
         Company savedCompany = companyRepository.save(newCompany);
